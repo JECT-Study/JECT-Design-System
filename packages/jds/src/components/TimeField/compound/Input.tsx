@@ -356,7 +356,10 @@ export const TimeFieldInput = forwardRef<HTMLInputElement, TimeFieldInputProps>(
     };
 
     const resetStateRef = useRef({ resetSegments });
-    resetStateRef.current = { resetSegments };
+    // 폼 초기화 타이머가 커밋된 렌더의 resetSegments만 쓰도록 렌더 중이 아니라 커밋 후에 갱신한다.
+    useLayoutEffect(() => {
+      resetStateRef.current = { resetSegments };
+    });
 
     useEffect(() => {
       const formElement = inputRef.current?.form ?? null;
@@ -373,6 +376,8 @@ export const TimeFieldInput = forwardRef<HTMLInputElement, TimeFieldInputProps>(
 
           cancelFieldExitCheck();
           resetStateRef.current.resetSegments(defaultValueRef.current);
+          // 적용 버튼을 누르기 전의 임시 선택이 초기화 뒤에 적용되지 않도록 열려 있던 시간 선택을 닫는다.
+          setIsPickerOpen(false);
         }, 0);
         resetTimers.add(timeoutId);
       };
