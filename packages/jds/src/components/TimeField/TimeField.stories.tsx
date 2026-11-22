@@ -61,7 +61,8 @@ const getTimeErrorMessage = (
  * - 그 밖의 오류(`required`, `outOfRange`, `stepMismatch`)는 문구와 `status`, 보여줄 시점을 사용처가 정합니다. `onInputStateChange`의 `error`로 오류 종류를 확인합니다.
  * - 분이 `minuteStep` 간격에 맞지 않으면 `error`가 `"stepMismatch"`입니다. 기본 간격은 5분입니다.
  * - `onBlur`는 입력창, 시간 선택 버튼, 팝업을 하나의 필드로 보고 필드를 벗어날 때 한 번 호출됩니다. 필드 안의 포커스 이동에서는 호출되지 않습니다.
- * - 시각이 되지 못한 입력(덜 입력한 시각, 없는 시각, 범위나 간격에 맞지 않는 시각)은 편집 내용을 그대로 두고 확정값을 빈 문자열로 바꿉니다. 확정값과 폼 제출값은 항상 같습니다.
+ * - 시각이 되지 못한 입력(덜 입력한 시각, 없는 시각, 범위나 간격에 맞지 않는 시각)은 편집 내용을 그대로 두고 확정값을 빈 문자열로 바꿉니다.
+ * - 세그먼트를 다 채우기 전(분에 `5`만 입력한 상태 등)에는 `onChange`를 호출하지 않으므로, 확정값은 이전 값이고 폼 제출값과 `onInputStateChange`의 `value`는 빈 문자열입니다. 필드를 벗어나거나 `Enter`를 누르면 입력 중인 숫자를 확정합니다. 제출 여부는 마지막 `onChange` 값 대신 `onInputStateChange`의 `value`와 `error`로 판단합니다.
  * - 해석할 수 없는 외부 값은 빈 입력과 빈 제출값으로 처리합니다.
  * - `onChange`는 확정값이 바뀔 때 호출됩니다. `onInputStateChange`로 편집 내용, 현재 유효한 제출값, 오류 종류를 확인합니다.
  * - 입력창을 벗어나면 부분 입력을 확정하고, 확정값이 바뀌면 `onChange`를 호출한 뒤 `onBlur`를 호출합니다.
@@ -97,6 +98,7 @@ const getTimeErrorMessage = (
  *     <TimeField status={fieldState.error === undefined ? "default" : "error"}>
  *       <TimeField.Label>시작 시각</TimeField.Label>
  *       <TimeField.Input
+ *         ref={field.ref}
  *         value={field.value}
  *         onChange={field.onChange}
  *         onBlur={field.onBlur}
