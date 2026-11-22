@@ -11,6 +11,7 @@ interface TimeFieldPickerProps extends Pick<
   "minuteStep" | "minTime" | "maxTime" | "withActionBar"
 > {
   contentRef: RefObject<HTMLDivElement>;
+  onFocus: FocusEventHandler<HTMLDivElement>;
   onBlur: FocusEventHandler<HTMLDivElement>;
   /** "HH:mm" 형식의 값. 비어 있으면 선택된 시각이 없다. */
   value: string;
@@ -34,6 +35,7 @@ const toMinuteBoundary = (time: TimeValue | undefined): TimeValue | undefined =>
  */
 export const TimeFieldPicker = ({
   contentRef,
+  onFocus,
   onBlur,
   value,
   onSelect,
@@ -70,6 +72,7 @@ export const TimeFieldPicker = ({
         onOpenAutoFocus={handleOpenAutoFocus}
         onCloseAutoFocus={onCloseAutoFocus}
         onInteractOutside={onInteractOutside}
+        onFocus={onFocus}
         onBlur={onBlur}
       >
         <TimePicker

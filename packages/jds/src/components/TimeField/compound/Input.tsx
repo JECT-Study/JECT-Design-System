@@ -485,6 +485,8 @@ export const TimeFieldInput = forwardRef<HTMLInputElement, TimeFieldInputProps>(
         {withPicker && (
           <TimeFieldPicker
             contentRef={pickerContentRef}
+            // 포털은 FieldContent의 React 자식이 아니므로 포커스가 시간 선택으로 바로 들어와도 필드 진입을 기록한다.
+            onFocus={handleFieldFocus}
             onBlur={handlePickerBlur}
             // 범위나 간격에 맞지 않아도 시각은 만들어졌으므로, 시간 선택이 입력한 시각에서 출발하게 한다.
             value={draftValue}
