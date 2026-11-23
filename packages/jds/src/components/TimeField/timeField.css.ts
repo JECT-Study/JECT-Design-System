@@ -52,11 +52,3 @@ export const picker = style({
   zIndex: vars.environment.semantic.zIndex.floated,
   outline: "none",
 });
-
-export const suffix = style({
-  position: "relative",
-  zIndex: 1,
-  display: "inline-flex",
-  alignItems: "center",
-  flexShrink: 0,
-});

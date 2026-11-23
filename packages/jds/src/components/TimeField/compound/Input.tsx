@@ -16,7 +16,8 @@ import { visuallyHidden } from "utils";
 
 import { TimeFieldPicker } from "./Picker";
 import { IconButton } from "../../Button/IconButton";
-import { FieldContent } from "../../Field";
+import { FieldContent, FieldKbd } from "../../Field";
+import * as fieldStyles from "../../Field/field.css";
 import { useFieldControl } from "../../Field/useFieldControl";
 import type { TimeValue } from "../../TimePicker";
 import { toSeconds } from "../../TimePicker/timePicker.utils";
@@ -80,7 +81,7 @@ export const TimeFieldInput = forwardRef<HTMLInputElement, TimeFieldInputProps>(
       defaultValue,
       onChange,
       onInputStateChange,
-      suffix = null,
+      kbd,
       withPicker = true,
       withActionBar = false,
       minuteStep = 5,
@@ -397,6 +398,7 @@ export const TimeFieldInput = forwardRef<HTMLInputElement, TimeFieldInputProps>(
     }, [form, cancelFieldExitCheck]);
 
     const formatHintId = `${fieldId}-format`;
+    const hasTrailing = withPicker || kbd != null;
 
     return (
       <Popover.Root
@@ -453,24 +455,27 @@ export const TimeFieldInput = forwardRef<HTMLInputElement, TimeFieldInputProps>(
             <span id={formatHintId} className={visuallyHidden}>
               {withPicker ? `${FORMAT_HINT} ${PICKER_HINT}` : FORMAT_HINT}
             </span>
-            {withPicker && (
-              <Popover.Trigger asChild>
-                <IconButton
-                  ref={pickerTriggerRef}
-                  onClick={() => {
-                    if (!isPickerOpen) isPickerOpenedFromInputRef.current = false;
-                  }}
-                  hierarchy='tertiary'
-                  size='md'
-                  condensed
-                  icon='clock-3'
-                  aria-label='시간 선택'
-                  disabled={!isEditable}
-                  className={styles.pickerButton}
-                />
-              </Popover.Trigger>
+            {hasTrailing && (
+              <span className={fieldStyles.contentTrailing}>
+                {withPicker && (
+                  <Popover.Trigger asChild>
+                    <IconButton
+                      ref={pickerTriggerRef}
+                      onClick={() => {
+                        if (!isPickerOpen) isPickerOpenedFromInputRef.current = false;
+                      }}
+                      hierarchy='tertiary'
+                      size='md'
+                      icon='clock-3'
+                      aria-label='시간 선택'
+                      disabled={!isEditable}
+                      className={clsx(fieldStyles.contentAction, styles.pickerButton)}
+                    />
+                  </Popover.Trigger>
+                )}
+                {kbd != null && <FieldKbd keys={kbd} disabled={isDisabled} />}
+              </span>
             )}
-            {suffix !== null && <span className={styles.suffix}>{suffix}</span>}
             {name !== undefined && (
               <input
                 type='hidden'

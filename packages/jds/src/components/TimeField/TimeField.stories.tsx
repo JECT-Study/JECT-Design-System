@@ -11,7 +11,6 @@ import { useState } from "react";
 import { TimeField } from "./TimeField";
 import type { TimeFieldInputError, TimeFieldInputState } from "./timeField.types";
 import { BlockButton } from "../Button/BlockButton";
-import { Kbd } from "../Kbd";
 
 const VALUE_LABEL_STYLE = { width: "auto", whiteSpace: "nowrap" } as const;
 
@@ -200,14 +199,14 @@ export const States: Story = {
 };
 
 /**
- * `suffix`로 시간 선택 버튼 오른쪽에 `Kbd`를 배치합니다.
- * 실제 시간 선택 열기 단축키인 Alt + ↓를 표시합니다. suffix는 단축키를 등록하지 않습니다.
+ * `kbd`로 시간 선택 버튼 오른쪽에 단축키를 표시합니다. 최대 4개까지 지정할 수 있습니다.
+ * 실제 시간 선택 열기 단축키인 Alt + ↓를 표시합니다. `kbd`는 단축키를 등록하지 않습니다.
  */
 export const WithKbd: Story = {
   render: () => (
     <TimeField style={FIELD_WIDTH}>
       <TimeField.Label>레이블</TimeField.Label>
-      <TimeField.Input suffix={<Kbd size='sm'>Alt + ↓</Kbd>} />
+      <TimeField.Input kbd={["Alt", "↓"]} />
       <TimeField.Helper>헬퍼 메시지 텍스트</TimeField.Helper>
     </TimeField>
   ),

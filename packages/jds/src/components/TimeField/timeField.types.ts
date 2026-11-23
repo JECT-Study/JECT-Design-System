@@ -1,6 +1,6 @@
-import type { ComponentPropsWithoutRef, ReactNode } from "react";
+import type { ComponentPropsWithoutRef } from "react";
 
-import type { FieldProps, FieldStatus } from "../Field";
+import type { FieldKbdKeys, FieldProps, FieldStatus } from "../Field";
 import type { TimePickerProps } from "../TimePicker";
 
 export interface TimeFieldProps extends Omit<FieldProps, "status"> {
@@ -67,8 +67,8 @@ interface TimeFieldInputBaseProps extends Omit<
    * 부분 입력을 확정하고 onChange를 부른 뒤에 호출하므로 React Hook Form의 field.onBlur를 그대로 연결할 수 있다.
    */
   onBlur?: () => void;
-  /** 시간 선택 버튼 오른쪽에 배치되는 부가 요소 (예: Kbd) */
-  suffix?: ReactNode;
+  /** 시간 선택 버튼 오른쪽에 표시하는 단축키. 최대 4개까지 지정할 수 있다. */
+  kbd?: FieldKbdKeys;
   /**
    * @description 시간 선택 버튼 표시 여부. 끄면 직접 입력만 할 수 있다.
    * @default true
