@@ -465,7 +465,8 @@ export const TimeFieldInput = forwardRef<HTMLInputElement, TimeFieldInputProps>(
               onDrop={composeHandler(onDropFromProps, handlers.onDrop)}
             />
             <span id={formatHintId} className={visuallyHidden}>
-              {withPicker ? `${FORMAT_HINT} ${PICKER_HINT}` : FORMAT_HINT}
+              {/* 읽기 전용, 비활성에서는 Alt+↓로 열리지 않으므로 여는 방법을 안내하지 않는다. */}
+              {withPicker && isEditable ? `${FORMAT_HINT} ${PICKER_HINT}` : FORMAT_HINT}
             </span>
             {/* aria-labelledby로만 읽힌다. 직접 참조된 숨김 요소는 이름 계산에 포함된다. */}
             {withPicker && (
