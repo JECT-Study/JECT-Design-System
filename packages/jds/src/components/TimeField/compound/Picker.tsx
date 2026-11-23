@@ -1,5 +1,6 @@
 import { Popover } from "radix-ui";
 import type { FocusEventHandler, RefObject } from "react";
+import type { AriaLabelProps } from "types";
 
 import { TimePicker, type TimeValue } from "../../TimePicker";
 import * as styles from "../timeField.css";
@@ -11,6 +12,11 @@ interface TimeFieldPickerProps extends Pick<
   "minuteStep" | "minTime" | "maxTime" | "withActionBar"
 > {
   contentRef: RefObject<HTMLDivElement>;
+  /** 시간 선택 팝오버의 이름. Radix가 role="dialog"로 노출하며, 시간 선택 버튼과 같게 읽힌다. */
+  popoverName: AriaLabelProps;
+  /** 팝오버 안 TimePicker(role="group")의 이름으로 쓰는 필드 라벨. 둘 다 없으면 TimePicker 기본 이름을 쓴다. */
+  fieldLabel: string | undefined;
+  fieldLabelledBy: string | undefined;
   onFocus: FocusEventHandler<HTMLDivElement>;
   onBlur: FocusEventHandler<HTMLDivElement>;
   /** "HH:mm" 형식의 값. 비어 있으면 선택된 시각이 없다. */
@@ -37,6 +43,9 @@ const toMinuteBoundary = (time: TimeValue | undefined): TimeValue | undefined =>
  */
 export const TimeFieldPicker = ({
   contentRef,
+  popoverName,
+  fieldLabel,
+  fieldLabelledBy,
   onFocus,
   onBlur,
   value,
@@ -70,7 +79,7 @@ export const TimeFieldPicker = ({
         align='start'
         sideOffset={4}
         collisionPadding={8}
-        aria-label='시간 선택'
+        {...popoverName}
         className={styles.picker}
         onOpenAutoFocus={handleOpenAutoFocus}
         onCloseAutoFocus={onCloseAutoFocus}
@@ -79,6 +88,8 @@ export const TimeFieldPicker = ({
         onBlur={onBlur}
       >
         <TimePicker
+          aria-label={fieldLabel}
+          aria-labelledby={fieldLabelledBy}
           format='hh:mm'
           value={valueToTime(value)}
           referenceTime={referenceTime}

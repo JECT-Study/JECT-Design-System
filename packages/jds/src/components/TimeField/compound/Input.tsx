@@ -12,6 +12,7 @@ import {
   type KeyboardEvent,
   type SyntheticEvent,
 } from "react";
+import type { AriaLabelProps } from "types";
 import { visuallyHidden } from "utils";
 
 import { TimeFieldPicker } from "./Picker";
@@ -44,6 +45,7 @@ import { getBodyClassName } from "@/utils/typography";
 const FORMAT_HINT =
   "오전 또는 오후, 시, 분 순서로 입력합니다. 좌우 방향키로 항목을 옮기고 위아래 방향키로 값을 바꿉니다.";
 const PICKER_HINT = "Alt와 아래 방향키를 함께 누르면 시간 선택이 열립니다.";
+const PICKER_LABEL = "시간 선택";
 
 // 소비처 핸들러를 먼저 호출하고, 기본 동작을 막았다면 내부 처리를 건너뛴다.
 const composeHandler =
@@ -402,6 +404,14 @@ export const TimeFieldInput = forwardRef<HTMLInputElement, TimeFieldInputProps>(
     const formatHintId = `${fieldId}-format`;
     const hasTrailing = withPicker || kbd != null;
 
+    // 시간 선택 버튼과 팝오버 이름에 필드 라벨을 붙여 같은 폼의 다른 TimeField와 구분한다. 예: "시간 선택 시작 시각"
+    // Field.Label이 있으면 숨긴 "시간 선택" 텍스트와 라벨을 aria-labelledby로 잇는다.
+    const pickerLabelId = `${fieldId}-picker-label`;
+    const pickerName: AriaLabelProps =
+      ariaLabelledBy === undefined
+        ? { "aria-label": ariaLabel === undefined ? PICKER_LABEL : `${PICKER_LABEL} ${ariaLabel}` }
+        : { "aria-labelledby": `${pickerLabelId} ${ariaLabelledBy}` };
+
     return (
       <Popover.Root
         open={isPickerOpen && isEditable && withPicker}
@@ -457,6 +467,12 @@ export const TimeFieldInput = forwardRef<HTMLInputElement, TimeFieldInputProps>(
             <span id={formatHintId} className={visuallyHidden}>
               {withPicker ? `${FORMAT_HINT} ${PICKER_HINT}` : FORMAT_HINT}
             </span>
+            {/* aria-labelledby로만 읽힌다. 직접 참조된 숨김 요소는 이름 계산에 포함된다. */}
+            {withPicker && (
+              <span id={pickerLabelId} hidden>
+                {PICKER_LABEL}
+              </span>
+            )}
             {hasTrailing && (
               <span className={fieldStyles.contentTrailing}>
                 {withPicker && (
@@ -477,7 +493,7 @@ export const TimeFieldInput = forwardRef<HTMLInputElement, TimeFieldInputProps>(
                       hierarchy='tertiary'
                       size='md'
                       icon='clock-3'
-                      aria-label='시간 선택'
+                      {...pickerName}
                       disabled={!isEditable}
                       className={clsx(fieldStyles.contentAction, styles.pickerButton)}
                     />
@@ -500,6 +516,9 @@ export const TimeFieldInput = forwardRef<HTMLInputElement, TimeFieldInputProps>(
         {withPicker && (
           <TimeFieldPicker
             contentRef={pickerContentRef}
+            popoverName={pickerName}
+            fieldLabel={ariaLabel}
+            fieldLabelledBy={ariaLabelledBy}
             // 포털은 FieldContent의 React 자식이 아니므로 포커스가 시간 선택으로 바로 들어와도 필드 진입을 기록한다.
             onFocus={handleFieldFocus}
             onBlur={handlePickerBlur}
