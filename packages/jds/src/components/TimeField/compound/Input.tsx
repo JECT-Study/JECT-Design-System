@@ -461,6 +461,14 @@ export const TimeFieldInput = forwardRef<HTMLInputElement, TimeFieldInputProps>(
                   <Popover.Trigger asChild>
                     <IconButton
                       ref={pickerTriggerRef}
+                      // Safari, macOS Firefox는 클릭한 버튼에 포커스를 주지 않아 포커스가 잠깐 body로 간다.
+                      // 그 사이 필드 이탈 판단이 돌아, 열거나 닫을 때 onBlur와 입력 오류가 먼저 나온다.
+                      // 브라우저 기본 포커스 처리를 막고 버튼에 직접 포커스를 줘 모든 브라우저에서 같게 동작시킨다.
+                      onMouseDown={event => {
+                        if (event.button !== 0) return;
+                        event.preventDefault();
+                        event.currentTarget.focus();
+                      }}
                       onClick={() => {
                         if (!isPickerOpen) isPickerOpenedFromInputRef.current = false;
                       }}
