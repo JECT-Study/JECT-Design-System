@@ -1,4 +1,4 @@
-// DateField의 useSegmentedInput을 옮긴 파일이다. resetSegments의 validate 옵션만 더했다.
+// DateField의 useSegmentedInput을 옮긴 파일이다. resetSegments의 validate 옵션과 segments 반환만 더했다.
 // TimeField가 머지되면 hooks로 옮겨 DateField와 하나로 합친다.
 import {
   useCallback,
@@ -111,7 +111,9 @@ interface SegmentedInputHandlers {
   onChange: ChangeEventHandler<HTMLInputElement>;
 }
 
-interface UseSegmentedInputResult {
+interface UseSegmentedInputResult<TSegments> {
+  /** 세그먼트별 확정된 입력. 자릿수를 채우는 중인 숫자는 아직 들어 있지 않다. */
+  segments: TSegments;
   /** input에 표시할 문자열. 포커스도 입력도 없으면 빈 문자열이라 placeholder가 보인다. */
   displayValue: string;
   /** 포커스와 무관한 편집 중 표시 문자열. 완전히 비었으면 빈 문자열이다. */
@@ -149,7 +151,7 @@ export const useSegmentedInput = <TKind extends string, TSegments, TPending>({
   onValueChange,
   isValueAllowed,
   isEditable,
-}: UseSegmentedInputOptions<TKind, TSegments, TPending>): UseSegmentedInputResult => {
+}: UseSegmentedInputOptions<TKind, TSegments, TPending>): UseSegmentedInputResult<TSegments> => {
   const { kinds } = rules;
   const firstKind = kinds[0];
   const lastKind = kinds[kinds.length - 1];
@@ -553,6 +555,7 @@ export const useSegmentedInput = <TKind extends string, TSegments, TPending>({
         : "valid";
 
   return {
+    segments,
     inputValue: hasInput ? rules.format(segments, pending) : "",
     draftValue,
     inputStatus,

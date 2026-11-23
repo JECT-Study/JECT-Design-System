@@ -31,6 +31,7 @@ import type {
 import {
   createTimeSegmentRules,
   normalizeTimeValue,
+  segmentsToReferenceTime,
   TIME_PLACEHOLDER,
   valueToTime,
 } from "../timeField.utils";
@@ -195,6 +196,7 @@ export const TimeFieldInput = forwardRef<HTMLInputElement, TimeFieldInputProps>(
     );
 
     const {
+      segments,
       displayValue,
       isEmpty,
       inputValue,
@@ -503,6 +505,9 @@ export const TimeFieldInput = forwardRef<HTMLInputElement, TimeFieldInputProps>(
             onBlur={handlePickerBlur}
             // 범위나 간격에 맞지 않아도 시각은 만들어졌으므로, 시간 선택이 입력한 시각에서 출발하게 한다.
             value={draftValue}
+            // 시각이 덜 입력됐으면 선택은 비우고, 입력한 세그먼트를 기준으로 남은 단위를 채우게 한다.
+            // 자릿수를 채우는 중인 숫자는 시간 선택으로 포커스가 옮겨 갈 때 input의 blur에서 확정되어 들어온다.
+            referenceTime={segmentsToReferenceTime(segments)}
             onSelect={handlePickerSelect}
             onCloseAutoFocus={handlePickerCloseAutoFocus}
             onInteractOutside={() => {

@@ -15,6 +15,8 @@ interface TimeFieldPickerProps extends Pick<
   onBlur: FocusEventHandler<HTMLDivElement>;
   /** "HH:mm" 형식의 값. 비어 있으면 선택된 시각이 없다. */
   value: string;
+  /** 선택된 시각이 없을 때 한 열만 고르면 나머지 단위를 채울 기준 시각. 일부만 입력한 시각을 넘긴다. */
+  referenceTime: TimeValue | undefined;
   /** 시간 선택에서 시각을 확정하면 "HH:mm" 값으로 호출된다. */
   onSelect: (value: string) => void;
   onCloseAutoFocus: (event: Event) => void;
@@ -38,6 +40,7 @@ export const TimeFieldPicker = ({
   onFocus,
   onBlur,
   value,
+  referenceTime,
   onSelect,
   withActionBar,
   minuteStep,
@@ -78,6 +81,7 @@ export const TimeFieldPicker = ({
         <TimePicker
           format='hh:mm'
           value={valueToTime(value)}
+          referenceTime={referenceTime}
           onChange={handleChange}
           withActionBar={withActionBar}
           minuteStep={minuteStep}

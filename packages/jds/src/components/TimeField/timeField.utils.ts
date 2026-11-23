@@ -160,6 +160,23 @@ export const valueToTime = (value: string): TimeValue | null => {
   return { hour: Number(match[1]), minute: Number(match[2]), second: 0 };
 };
 
+/**
+ * 일부만 입력한 세그먼트로 TimePicker의 기준 시각을 만든다. 아무것도 입력하지 않았으면 undefined다.
+ * 비었거나 없는 값인 세그먼트는 오전, 12시, 0분으로 채워 입력한 세그먼트만 기준에 남긴다.
+ */
+export const segmentsToReferenceTime = ({
+  meridiem,
+  hour,
+  minute,
+}: TimeSegments): TimeValue | undefined => {
+  if (meridiem === null && hour === null && minute === null) return undefined;
+
+  const hour12 = hour !== null && isWithin(hour, 1, HOURS_PER_HALF_DAY) ? hour : HOURS_PER_HALF_DAY;
+  const hour24 = (hour12 % HOURS_PER_HALF_DAY) + (meridiem === "pm" ? HOURS_PER_HALF_DAY : 0);
+  const validMinute = minute !== null && isWithin(minute, 0, MINUTES_PER_HOUR - 1) ? minute : 0;
+  return { hour: hour24, minute: validMinute, second: 0 };
+};
+
 /** TimePicker의 시각을 "HH:mm" 값으로 바꾼다. 초는 버린다. null이면 빈 문자열이다. */
 export const timeToValue = (time: TimeValue | null): string => {
   if (time === null) return "";
