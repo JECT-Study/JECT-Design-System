@@ -58,9 +58,17 @@ export interface TimePickerProps extends Omit<
    * @description 선택이 확정되면 새 시각으로 호출됩니다.
    *
    * @remarks
-   * 선택이 없는 상태에서 한 열만 고르면 나머지 단위는 `minTime`, 없으면 00:00:00에서 채웁니다.
+   * 선택이 없는 상태에서 한 열만 고르면 나머지 단위는 `referenceTime`, `minTime`, 00:00:00 순서로 처음 있는 값에서 채웁니다.
    */
   onChange?: (value: TimeValue) => void;
+  /**
+   * @description 선택이 없는 상태에서 한 열만 골랐을 때 나머지 단위를 채울 기준 시각
+   *
+   * @remarks
+   * 선택 표시는 하지 않습니다. 선택이 있으면 쓰지 않습니다.
+   * 범위 밖이면 고른 단위는 유지한 채 가장 가까운 유효 시각으로 맞춥니다.
+   */
+  referenceTime?: TimeValue;
   /**
    * @description 분 목록의 간격. 간격에 맞지 않는 분이 들어오면 값은 그대로 두고 분 열에 선택 표시를 하지 않습니다.
    * @default 5

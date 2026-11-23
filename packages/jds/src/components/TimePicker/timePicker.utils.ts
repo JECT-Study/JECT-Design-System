@@ -19,7 +19,7 @@ export interface TimeColumnOption {
 
 /** 열 항목을 만들고 선택을 반영할 때 필요한 공통 조건 */
 export interface TimeColumnContext {
-  /** 선택이 없으면 `minTime`, 그것도 없으면 자정 */
+  /** 선택이 없으면 `referenceTime`, `minTime`, 자정 순서로 처음 있는 값 */
   base: TimeValue;
   format: TimePickerFormat;
   minuteStep: TimeStep;
