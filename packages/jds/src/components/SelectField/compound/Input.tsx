@@ -26,6 +26,7 @@ import type { SelectFieldInputProps } from "../selectField.types";
 
 import { mergeRefs } from "@/hooks/mergeRefs";
 import { getActiveDescendantContainerProps } from "@/hooks/useActiveDescendant";
+import { useFormReset } from "@/hooks/useFormReset";
 import { getBodyClassName } from "@/utils/typography";
 
 const MOVE_KEYS = ["ArrowDown", "ArrowUp"];
@@ -100,6 +101,18 @@ export const SelectFieldInput = forwardRef<HTMLInputElement, SelectFieldInputPro
     // 검색 중일 때만 값을 갖는다. null이면 선택한 옵션의 표시명을 표시한다.
     const [query, setQuery] = useState<string | null>(null);
     const trimmedQuery = query?.trim() ?? "";
+
+    // 선택값은 hidden input이 아니라 상태에 있으므로 폼 초기화 때 최초 defaultValue로 직접 되돌린다.
+    const defaultValueRef = useRef(defaultValue ?? null);
+
+    useFormReset({
+      controlRef: inputRef,
+      form,
+      onReset: () => {
+        select(defaultValueRef.current);
+        setQuery(null);
+      },
+    });
 
     const visibleOptions = useMemo(() => {
       if (trimmedQuery === "") return options;
@@ -287,6 +300,7 @@ export const SelectFieldInput = forwardRef<HTMLInputElement, SelectFieldInputPro
               ref={mergeRefs(ref, inputRef)}
               id={fieldId}
               type='text'
+              form={form}
               role='combobox'
               aria-haspopup='listbox'
               aria-expanded={isOpen}

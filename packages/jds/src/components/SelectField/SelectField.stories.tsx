@@ -182,6 +182,50 @@ export const WithKbd: Story = {
   ),
 };
 
+const FormPreview = () => {
+  const [submitted, setSubmitted] = useState<string | null>(null);
+
+  return (
+    <form
+      onSubmit={e => {
+        e.preventDefault();
+        const entry = new FormData(e.currentTarget).get("regions");
+        setSubmitted(typeof entry === "string" ? entry : null);
+      }}
+      onReset={() => setSubmitted(null)}
+    >
+      <FlexColumn gap='16px' style={{ alignItems: "flex-start" }}>
+        <SelectField style={FIELD_WIDTH}>
+          <SelectField.Label>레이블</SelectField.Label>
+          <SelectField.Input
+            options={REGION_OPTIONS}
+            name='regions'
+            defaultValue='seoul'
+            placeholder='플레이스홀더'
+          />
+        </SelectField>
+        <FlexRow gap='8px' style={FIELD_WIDTH}>
+          <BlockButton type='reset' style={{ flex: 1 }}>
+            초기화
+          </BlockButton>
+          <BlockButton type='submit' style={{ flex: 1 }}>
+            제출
+          </BlockButton>
+        </FlexRow>
+        <FormResult value={submitted} />
+      </FlexColumn>
+    </form>
+  );
+};
+
+/**
+ * `name`을 지정하면 선택한 값이 hidden input으로 렌더되어 폼 제출에 포함됩니다.
+ * 초기화를 누르면 최초 `defaultValue`로 돌아갑니다.
+ */
+export const WithForm: Story = {
+  render: () => <FormPreview />,
+};
+
 /**
  * 옵션별로 캡션과 부가 요소, 비활성 여부를 함께 지정할 수 있습니다.
  */
@@ -262,41 +306,4 @@ export const DialogWheelScroll: Story = {
       </Dialog.Portal>
     </Dialog.Root>
   ),
-};
-
-const FormPreview = () => {
-  const [submitted, setSubmitted] = useState<string | null>(null);
-
-  return (
-    <form
-      onSubmit={e => {
-        e.preventDefault();
-        const entry = new FormData(e.currentTarget).get("regions");
-        setSubmitted(typeof entry === "string" ? entry : null);
-      }}
-    >
-      <FlexColumn gap='16px' style={{ alignItems: "flex-start" }}>
-        <SelectField style={FIELD_WIDTH}>
-          <SelectField.Label>레이블</SelectField.Label>
-          <SelectField.Input
-            options={REGION_OPTIONS}
-            name='regions'
-            defaultValue='seoul'
-            placeholder='플레이스홀더'
-          />
-        </SelectField>
-        <BlockButton type='submit' style={{ width: "100%" }}>
-          제출
-        </BlockButton>
-        <FormResult value={submitted} />
-      </FlexColumn>
-    </form>
-  );
-};
-
-/**
- * `name`을 지정하면 선택한 값이 hidden input으로 렌더되어 폼 제출에 포함됩니다.
- */
-export const WithForm: Story = {
-  render: () => <FormPreview />,
 };

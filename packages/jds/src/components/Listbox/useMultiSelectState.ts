@@ -28,5 +28,5 @@ export const useMultiSelectState = (
     [setSelectedValues],
   );
 
-  return { selectedValues, toggle, remove };
+  return { selectedValues, setSelectedValues, toggle, remove };
 };
