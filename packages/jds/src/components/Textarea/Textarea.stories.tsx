@@ -1,8 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { FIELD_PLAYGROUND_ARGS, FIELD_WIDTH, fieldArgTypes } from "@storybook-utils/field";
+import {
+  FIELD_PLAYGROUND_ARGS,
+  FIELD_WIDTH,
+  fieldArgTypes,
+  FormResult,
+} from "@storybook-utils/field";
 import { FlexColumn, FlexRow, Label } from "@storybook-utils/layout";
+import { useState } from "react";
 
 import { Textarea } from "./Textarea";
+import { BlockButton } from "../Button/BlockButton";
 
 /**
  * 여러 줄 텍스트를 입력하는 필드입니다. 오른쪽 아래 손잡이로 세로 방향 크기를 조절할 수 있습니다.
@@ -108,4 +115,51 @@ export const WithCounter: Story = {
       </Textarea.Footer>
     </Textarea>
   ),
+};
+
+const FormPreview = () => {
+  const [submitted, setSubmitted] = useState<string | null>(null);
+
+  return (
+    <form
+      onSubmit={e => {
+        e.preventDefault();
+        setSubmitted(JSON.stringify(Object.fromEntries(new FormData(e.currentTarget))));
+      }}
+      onReset={() => setSubmitted(null)}
+    >
+      <FlexColumn gap='16px' style={{ alignItems: "flex-start" }}>
+        <Textarea style={FIELD_WIDTH}>
+          <Textarea.Label>레이블</Textarea.Label>
+          <Textarea.Control
+            name='text'
+            maxLength={100}
+            defaultValue='입력 값'
+            placeholder='플레이스홀더'
+          />
+          <Textarea.Footer>
+            <Textarea.Helper>헬퍼 텍스트</Textarea.Helper>
+            <Textarea.Counter />
+          </Textarea.Footer>
+        </Textarea>
+        <FlexRow gap='8px' style={FIELD_WIDTH}>
+          <BlockButton type='reset' style={{ flex: 1 }}>
+            초기화
+          </BlockButton>
+          <BlockButton type='submit' style={{ flex: 1 }}>
+            제출
+          </BlockButton>
+        </FlexRow>
+        <FormResult value={submitted} />
+      </FlexColumn>
+    </form>
+  );
+};
+
+/**
+ * `name`을 지정하면 입력한 값이 폼 제출에 포함됩니다.
+ * 초기화를 누르면 `defaultValue`로 돌아가고, `Textarea.Counter`도 그 글자 수를 표시합니다.
+ */
+export const WithForm: Story = {
+  render: () => <FormPreview />,
 };

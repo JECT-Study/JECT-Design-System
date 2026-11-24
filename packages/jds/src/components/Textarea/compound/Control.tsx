@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import { forwardRef } from "react";
+import { forwardRef, useRef } from "react";
 
 import { FieldContent } from "../../Field";
 import { useFieldControl } from "../../Field/useFieldControl";
@@ -7,6 +7,7 @@ import { useTextLengthCounter } from "../../Field/useFieldCounter";
 import * as styles from "../textarea.css";
 import type { TextareaControlProps } from "../textarea.types";
 
+import { mergeRefs } from "@/hooks/mergeRefs";
 import { getBodyClassName } from "@/utils/typography";
 
 export const TextareaControl = forwardRef<HTMLTextAreaElement, TextareaControlProps>(
@@ -24,6 +25,7 @@ export const TextareaControl = forwardRef<HTMLTextAreaElement, TextareaControlPr
       defaultValue,
       onChange,
       maxLength,
+      form,
       ...restProps
     },
     ref,
@@ -47,7 +49,11 @@ export const TextareaControl = forwardRef<HTMLTextAreaElement, TextareaControlPr
       ariaInvalid: invalidFromProps,
     });
 
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
     const handleChange = useTextLengthCounter<HTMLTextAreaElement>("Textarea.Control", {
+      controlRef: textareaRef,
+      form,
       value,
       defaultValue,
       maxLength,
@@ -58,8 +64,9 @@ export const TextareaControl = forwardRef<HTMLTextAreaElement, TextareaControlPr
       <FieldContent controlType='textarea'>
         <textarea
           {...restProps}
-          ref={ref}
+          ref={mergeRefs(ref, textareaRef)}
           id={fieldId}
+          form={form}
           value={value}
           defaultValue={defaultValue}
           onChange={handleChange}
