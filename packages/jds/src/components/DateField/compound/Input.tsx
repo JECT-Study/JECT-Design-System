@@ -37,6 +37,7 @@ import { useSegmentedInput } from "../useSegmentedInput";
 
 import { mergeRefs } from "@/hooks/mergeRefs";
 import { useControllableState } from "@/hooks/useControllableState";
+import { useFormReset } from "@/hooks/useFormReset";
 import { getBodyClassName } from "@/utils/typography";
 
 const FORMAT_HINT =
@@ -342,44 +343,30 @@ export const DateFieldInput = forwardRef<HTMLInputElement, DateFieldInputProps>(
       focusActiveSegment();
     };
 
-    const resetStateRef = useRef({ resetSegments, isValueAllowed });
-    resetStateRef.current = { resetSegments, isValueAllowed };
+    useFormReset({
+      controlRef: inputRef,
+      form,
+      onReset: () => {
+        cancelFieldExitCheck();
+        resetSegments(defaultValueRef.current);
+        lastValidValueRef.current = isValueAllowed(defaultValueRef.current)
+          ? defaultValueRef.current
+          : "";
+      },
+    });
 
     useEffect(() => {
       const formElement = inputRef.current?.form ?? null;
       if (formElement === null) return;
-
-      const resetTimers = new Set<ReturnType<typeof setTimeout>>();
-
-      // reset 기본 동작이 끝난 다음 태스크에서 값을 되돌린다. 소비처의 초기화 취소 여부도 이 시점에 확인할 수 있다.
-      const handleReset = (event: Event) => {
-        const timeoutId = setTimeout(() => {
-          resetTimers.delete(timeoutId);
-          // cleanup 전에 필드가 제거되거나 다른 폼에 연결되어도 이전 초기화를 적용하지 않는다.
-          if (event.defaultPrevented || inputRef.current?.form !== formElement) return;
-
-          cancelFieldExitCheck();
-          resetStateRef.current.resetSegments(defaultValueRef.current);
-          lastValidValueRef.current = resetStateRef.current.isValueAllowed(defaultValueRef.current)
-            ? defaultValueRef.current
-            : "";
-        }, 0);
-        resetTimers.add(timeoutId);
-      };
 
       // 입력칸에서 Enter로 제출하면 필드를 벗어나지 않으므로 제출 시점에도 입력 오류를 보여 준다.
       const handleSubmit = () => {
         if (isInputErrorRef.current) setIsInputErrorRevealed(true);
       };
 
-      formElement.addEventListener("reset", handleReset);
       formElement.addEventListener("submit", handleSubmit);
-      return () => {
-        formElement.removeEventListener("reset", handleReset);
-        formElement.removeEventListener("submit", handleSubmit);
-        resetTimers.forEach(timeoutId => clearTimeout(timeoutId));
-      };
-    }, [form, cancelFieldExitCheck]);
+      return () => formElement.removeEventListener("submit", handleSubmit);
+    }, [form]);
 
     const formatHintId = `${fieldId}-format`;
     const hasTrailing = withPicker || kbd != null;
