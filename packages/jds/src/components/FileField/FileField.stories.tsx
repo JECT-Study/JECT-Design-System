@@ -200,6 +200,9 @@ export const WithKbd: Story = {
   ),
 };
 
+// 폼 전송과 초기화를 확인할 수 있도록 실제 파일 데이터가 있는 값을 쓴다.
+const SAMPLE_FORM_FILE = new File(["샘플"], "파일명.pdf", { type: "application/pdf" });
+
 const FormPreview = () => {
   const [submitted, setSubmitted] = useState<string | null>(null);
 
@@ -210,19 +213,29 @@ const FormPreview = () => {
         const entry = new FormData(e.currentTarget).get("portfolio");
         setSubmitted(entry instanceof File && entry.name !== "" ? entry.name : null);
       }}
+      onReset={() => setSubmitted(null)}
     >
       <FlexColumn gap='16px' style={{ alignItems: "flex-start" }}>
         <FileField style={FIELD_WIDTH}>
           <FileField.Label>레이블</FileField.Label>
-          <FileField.Input name='portfolio' defaultValue={SAMPLE_FILE} placeholder='플레이스홀더' />
+          <FileField.Input
+            name='portfolio'
+            defaultValue={SAMPLE_FORM_FILE}
+            placeholder='플레이스홀더'
+          />
           <FileField.Footer>
             <FileField.Helper>헬퍼 텍스트</FileField.Helper>
             <FileField.Size />
           </FileField.Footer>
         </FileField>
-        <BlockButton type='submit' style={{ width: "100%" }}>
-          제출
-        </BlockButton>
+        <FlexRow gap='8px' style={FIELD_WIDTH}>
+          <BlockButton type='reset' style={{ flex: 1 }}>
+            초기화
+          </BlockButton>
+          <BlockButton type='submit' style={{ flex: 1 }}>
+            제출
+          </BlockButton>
+        </FlexRow>
         <FormResult value={submitted} />
       </FlexColumn>
     </form>
@@ -231,7 +244,8 @@ const FormPreview = () => {
 
 /**
  * `name`을 지정하면 선택한 파일이 폼에 함께 전송됩니다.
- * 실제 파일 데이터가 없는 초기값은 전송되지 않으며, 새로 파일을 선택한 후부터 전송됩니다.
+ * 초기화를 누르면 최초 `defaultValue`로 돌아가고, 그 파일이 다시 전송 대상이 됩니다.
+ * 서버에 이미 있는 파일처럼 실제 파일 데이터가 없는 값은 표시만 하고 전송하지 않습니다.
  */
 export const WithForm: Story = {
   render: () => <FormPreview />,
