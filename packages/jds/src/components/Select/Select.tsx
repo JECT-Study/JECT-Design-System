@@ -21,7 +21,10 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
     },
     ref,
   ) => {
-    const { selectedValues, select } = useSingleSelectState(value, defaultValue, onChange);
+    // Select에는 선택을 해제하는 경로가 없으므로 선택한 값만 onChange로 알린다.
+    const { selectedValues, select } = useSingleSelectState(value, defaultValue, next => {
+      if (next != null) onChange?.(next);
+    });
 
     const { listboxRef, behavior, getFocusableListboxProps } = useListbox({
       selectedValues,
