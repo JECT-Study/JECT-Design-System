@@ -1,5 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { FIELD_PLAYGROUND_ARGS, FIELD_WIDTH, fieldArgTypes } from "@storybook-utils/field";
+import {
+  FIELD_PLAYGROUND_ARGS,
+  FIELD_WIDTH,
+  fieldArgTypes,
+  FormResult,
+} from "@storybook-utils/field";
 import { FlexColumn, FlexRow, Label } from "@storybook-utils/layout";
 import { useEffect, useState } from "react";
 
@@ -192,6 +197,53 @@ export const WithCounter: Story = {
       </TextField.Footer>
     </TextField>
   ),
+};
+
+const FormPreview = () => {
+  const [submitted, setSubmitted] = useState<string | null>(null);
+
+  return (
+    <form
+      onSubmit={e => {
+        e.preventDefault();
+        setSubmitted(JSON.stringify(Object.fromEntries(new FormData(e.currentTarget))));
+      }}
+      onReset={() => setSubmitted(null)}
+    >
+      <FlexColumn gap='16px' style={{ alignItems: "flex-start" }}>
+        <TextField style={FIELD_WIDTH}>
+          <TextField.Label>레이블</TextField.Label>
+          <TextField.Input
+            name='text'
+            maxLength={20}
+            defaultValue='입력 값'
+            placeholder='플레이스홀더'
+          />
+          <TextField.Footer>
+            <TextField.Helper>헬퍼 텍스트</TextField.Helper>
+            <TextField.Counter />
+          </TextField.Footer>
+        </TextField>
+        <FlexRow gap='8px' style={FIELD_WIDTH}>
+          <BlockButton type='reset' style={{ flex: 1 }}>
+            초기화
+          </BlockButton>
+          <BlockButton type='submit' style={{ flex: 1 }}>
+            제출
+          </BlockButton>
+        </FlexRow>
+        <FormResult value={submitted} />
+      </FlexColumn>
+    </form>
+  );
+};
+
+/**
+ * `name`을 지정하면 입력한 값이 폼 제출에 포함됩니다.
+ * 초기화를 누르면 `defaultValue`로 돌아가고, `TextField.Counter`도 그 글자 수를 표시합니다.
+ */
+export const WithForm: Story = {
+  render: () => <FormPreview />,
 };
 
 const TIMER_SECONDS = 180;

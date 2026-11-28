@@ -1,12 +1,5 @@
 import { clsx } from "clsx";
-import {
-  forwardRef,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  type ChangeEvent,
-  type MouseEvent,
-} from "react";
+import { forwardRef, useLayoutEffect, useRef, type ChangeEvent, type MouseEvent } from "react";
 import { visuallyHidden } from "utils";
 
 import { IconButton } from "../../Button/IconButton";
@@ -21,6 +14,7 @@ import { validateFile } from "../fileField.utils";
 
 import { mergeRefs } from "@/hooks/mergeRefs";
 import { useControllableState } from "@/hooks/useControllableState";
+import { useFormReset } from "@/hooks/useFormReset";
 import { getBodyClassName } from "@/utils/typography";
 
 /**
@@ -47,6 +41,7 @@ export const FileFieldInput = forwardRef<HTMLInputElement, FileFieldInputProps>(
       "aria-label": ariaLabelFromProps,
       "aria-labelledby": labelledByFromProps,
       "aria-describedby": describedByFromProps,
+      form,
       className,
       ...restProps
     },
@@ -119,24 +114,15 @@ export const FileFieldInput = forwardRef<HTMLInputElement, FileFieldInputProps>(
       syncInputFiles(file);
     });
 
-    useEffect(() => {
-      const form = inputRef.current?.form;
-      if (form == null) return;
-
-      // 클릭으로 발생한 reset 기본 동작은 마이크로태스크 이후에 실행되어 input.files를 비운다.
-      // 기본 동작이 끝난 다음 태스크에서 값을 되돌린다. 소비처의 초기화 취소 여부도 이 시점에 확인할 수 있다.
-      const handleReset = (e: Event) => {
-        setTimeout(() => {
-          if (e.defaultPrevented) return;
-
-          setFile(defaultValueRef.current);
-          syncInputFiles(defaultValueRef.current);
-        }, 0);
-      };
-
-      form.addEventListener("reset", handleReset);
-      return () => form.removeEventListener("reset", handleReset);
-    }, [setFile]);
+    // reset 기본 동작이 input.files를 비우므로 기본값과 input.files를 함께 되돌린다.
+    useFormReset({
+      controlRef: inputRef,
+      form,
+      onReset: () => {
+        setFile(defaultValueRef.current);
+        syncInputFiles(defaultValueRef.current);
+      },
+    });
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       if (!isInteractive) {
@@ -203,6 +189,7 @@ export const FileFieldInput = forwardRef<HTMLInputElement, FileFieldInputProps>(
           ref={mergeRefs(ref, inputRef)}
           id={fieldId}
           type='file'
+          form={form}
           accept={accept}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}

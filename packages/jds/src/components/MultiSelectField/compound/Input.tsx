@@ -28,6 +28,7 @@ import type { MultiSelectFieldInputProps } from "../multiSelectField.types";
 
 import { mergeRefs } from "@/hooks/mergeRefs";
 import { getActiveDescendantContainerProps } from "@/hooks/useActiveDescendant";
+import { useFormReset } from "@/hooks/useFormReset";
 import { getBodyClassName } from "@/utils/typography";
 
 const MOVE_KEYS = ["ArrowDown", "ArrowUp"];
@@ -91,12 +92,28 @@ export const MultiSelectFieldInput = forwardRef<HTMLInputElement, MultiSelectFie
 
     const isInteractive = !isDisabled && !isReadOnly;
 
-    const { selectedValues, toggle, remove } = useMultiSelectState(value, defaultValue, onChange);
+    const { selectedValues, setSelectedValues, toggle, remove } = useMultiSelectState(
+      value,
+      defaultValue,
+      onChange,
+    );
     // 입력할 수 없는 상태에서는 입력칸이 배지 뒤 자리를 차지해 빈 줄을 만들지 않도록 흐름에서 뺀다.
     const isInputCollapsed = !isInteractive && selectedValues.length > 0;
 
     const inputRef = useRef<HTMLInputElement>(null);
     const [query, setQuery] = useState("");
+
+    // 선택값은 hidden input이 아니라 상태에 있으므로 폼 초기화 때 최초 defaultValue로 직접 되돌린다.
+    const defaultValueRef = useRef(defaultValue ?? []);
+
+    useFormReset({
+      controlRef: inputRef,
+      form,
+      onReset: () => {
+        setSelectedValues(defaultValueRef.current);
+        setQuery("");
+      },
+    });
 
     const trimmedQuery = query.trim();
     const isAtMax = maxValues != null && selectedValues.length >= maxValues;
@@ -308,6 +325,7 @@ export const MultiSelectFieldInput = forwardRef<HTMLInputElement, MultiSelectFie
                 ref={mergeRefs(ref, inputRef)}
                 id={fieldId}
                 type='text'
+                form={form}
                 role='combobox'
                 aria-haspopup='listbox'
                 aria-expanded={isOpen}

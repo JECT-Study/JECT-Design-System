@@ -4,14 +4,12 @@ import { useMemo } from "react";
 export const useSingleSelectState = (
   value: string | null | undefined,
   defaultValue: string | undefined,
-  onChange?: (value: string) => void,
+  onChange?: (value: string | null) => void,
 ) => {
   const [selectedValue, select] = useControllableState<string | null>(
     value,
     defaultValue ?? null,
-    next => {
-      if (next != null) onChange?.(next);
-    },
+    onChange,
   );
 
   const selectedValues = useMemo(

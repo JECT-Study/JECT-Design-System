@@ -32,6 +32,7 @@ export const TextFieldInput = forwardRef<HTMLInputElement, TextFieldInputProps>(
       onChange,
       maxLength,
       placeholder,
+      form,
       ...restProps
     },
     ref,
@@ -58,6 +59,8 @@ export const TextFieldInput = forwardRef<HTMLInputElement, TextFieldInputProps>(
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handleCountedChange = useTextLengthCounter<HTMLInputElement>("TextField.Input", {
+      controlRef: inputRef,
+      form,
       value,
       defaultValue,
       maxLength,
@@ -91,6 +94,7 @@ export const TextFieldInput = forwardRef<HTMLInputElement, TextFieldInputProps>(
           {...restProps}
           ref={mergeRefs(ref, inputRef)}
           id={fieldId}
+          form={form}
           value={value}
           defaultValue={defaultValue}
           onChange={handleCountedChange}

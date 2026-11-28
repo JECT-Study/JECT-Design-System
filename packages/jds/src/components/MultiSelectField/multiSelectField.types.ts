@@ -32,6 +32,7 @@ interface MultiSelectFieldInputControlledProps {
 
 interface MultiSelectFieldInputUncontrolledProps {
   value?: never;
+  /** 최초 마운트의 선택값 목록이자 폼 reset 기준. 이후 prop 변경은 반영하지 않는다. */
   defaultValue?: string[];
   onChange?: (value: string[]) => void;
 }

@@ -23,15 +23,19 @@ interface SelectFieldInputBaseProps extends Omit<
 }
 
 interface SelectFieldInputControlledProps {
+  /** 선택한 옵션의 값. `null`이면 선택하지 않은 상태다. */
   value: string | null;
   defaultValue?: never;
-  onChange: (value: string) => void;
+  /** 선택이 바뀔 때 호출한다. 폼 초기화로 선택이 해제되면 `null`을 전달한다. */
+  onChange: (value: string | null) => void;
 }
 
 interface SelectFieldInputUncontrolledProps {
   value?: never;
+  /** 최초 마운트의 선택값이자 폼 reset 기준. 이후 prop 변경은 반영하지 않는다. */
   defaultValue?: string;
-  onChange?: (value: string) => void;
+  /** 선택이 바뀔 때 호출한다. 폼 초기화로 선택이 해제되면 `null`을 전달한다. */
+  onChange?: (value: string | null) => void;
 }
 
 export type SelectFieldInputProps = SelectFieldInputBaseProps &

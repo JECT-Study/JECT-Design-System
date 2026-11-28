@@ -217,6 +217,56 @@ export const WithKbd: Story = {
   ),
 };
 
+const FormPreview = () => {
+  const [submitted, setSubmitted] = useState<string | null>(null);
+
+  return (
+    <form
+      onSubmit={e => {
+        e.preventDefault();
+        const entries = new FormData(e.currentTarget).getAll("regions");
+        setSubmitted(entries.filter(entry => typeof entry === "string").join(", "));
+      }}
+      onReset={() => setSubmitted(null)}
+    >
+      <FlexColumn gap='16px' style={{ alignItems: "flex-start" }}>
+        <MultiSelectField style={FIELD_WIDTH}>
+          <MultiSelectField.Label>레이블</MultiSelectField.Label>
+          <MultiSelectField.Input
+            options={REGION_OPTIONS}
+            name='regions'
+            defaultValue={["seoul", "busan"]}
+            maxValues={3}
+            placeholder='플레이스홀더'
+          />
+          <MultiSelectField.Footer>
+            <MultiSelectField.Helper>헬퍼 텍스트</MultiSelectField.Helper>
+            <MultiSelectField.Counter />
+          </MultiSelectField.Footer>
+        </MultiSelectField>
+        <FlexRow gap='8px' style={FIELD_WIDTH}>
+          <BlockButton type='reset' style={{ flex: 1 }}>
+            초기화
+          </BlockButton>
+          <BlockButton type='submit' style={{ flex: 1 }}>
+            제출
+          </BlockButton>
+        </FlexRow>
+        <FormResult value={submitted} />
+      </FlexColumn>
+    </form>
+  );
+};
+
+/**
+ * `name`을 지정하면 선택한 값마다 hidden input이 렌더되어 폼 제출에 포함됩니다.
+ * 값이 여러 개이므로 소비처에서는 `FormData.getAll(name)`으로 값을 가져올 수 있습니다.
+ * 초기화를 누르면 최초 `defaultValue`로 돌아가고, `MultiSelectField.Counter`도 그 개수를 표시합니다.
+ */
+export const WithForm: Story = {
+  render: () => <FormPreview />,
+};
+
 /**
  * 옵션별로 캡션과 부가 요소, 비활성 여부를 함께 지정할 수 있습니다.
  */
@@ -303,42 +353,4 @@ export const DialogWheelScroll: Story = {
       </Dialog.Portal>
     </Dialog.Root>
   ),
-};
-
-const FormPreview = () => {
-  const [submitted, setSubmitted] = useState<string | null>(null);
-
-  return (
-    <form
-      onSubmit={e => {
-        e.preventDefault();
-        const entries = new FormData(e.currentTarget).getAll("regions");
-        setSubmitted(entries.filter(entry => typeof entry === "string").join(", "));
-      }}
-    >
-      <FlexColumn gap='16px' style={{ alignItems: "flex-start" }}>
-        <MultiSelectField style={FIELD_WIDTH}>
-          <MultiSelectField.Label>레이블</MultiSelectField.Label>
-          <MultiSelectField.Input
-            options={REGION_OPTIONS}
-            name='regions'
-            defaultValue={["seoul", "busan"]}
-            placeholder='플레이스홀더'
-          />
-        </MultiSelectField>
-        <BlockButton type='submit' style={{ width: "100%" }}>
-          제출
-        </BlockButton>
-        <FormResult value={submitted} />
-      </FlexColumn>
-    </form>
-  );
-};
-
-/**
- * `name`을 지정하면 선택한 값마다 hidden input이 렌더되어 폼 제출에 포함됩니다.
- * 값이 여러 개이므로 소비처에서는 `FormData.getAll(name)`으로 값을 가져올 수 있습니다.
- */
-export const WithForm: Story = {
-  render: () => <FormPreview />,
 };
