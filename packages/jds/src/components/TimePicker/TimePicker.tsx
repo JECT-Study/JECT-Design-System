@@ -48,6 +48,7 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(
       value,
       defaultValue = null,
       onChange,
+      referenceTime,
       minuteStep = 5,
       secondStep = 5,
       minTime,
@@ -73,7 +74,7 @@ export const TimePicker = forwardRef<HTMLDivElement, TimePickerProps>(
     });
 
     const context: TimeColumnContext = {
-      base: displayed ?? minTime ?? MIDNIGHT,
+      base: displayed ?? referenceTime ?? minTime ?? MIDNIGHT,
       format,
       minuteStep,
       secondStep,

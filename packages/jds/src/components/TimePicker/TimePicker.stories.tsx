@@ -48,6 +48,7 @@ const meta: Meta<typeof TimePicker> = {
     defaultValue: { control: false },
     minuteStep: { control: "select", options: TIME_STEP_OPTIONS },
     secondStep: { control: "select", options: TIME_STEP_OPTIONS },
+    referenceTime: { control: false },
     minTime: { control: false },
     maxTime: { control: false },
     withActionBar: { control: "boolean" },
@@ -173,6 +174,41 @@ export const OutOfRangeValue: Story = {
     format: "HH:mm",
     defaultValue: { hour: 20, minute: 0, second: 0 },
     maxTime: { hour: 18, minute: 0, second: 0 },
+  },
+};
+
+export const ReferenceTime: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: [
+          "`referenceTime`은 선택이 없는 상태에서 한 열만 골랐을 때 나머지 단위를 채울 기준 시각입니다. 선택 표시는 하지 않고, 선택이 있으면 쓰지 않습니다.",
+          "",
+          "입력 필드에서 일부 단위만 입력한 상태로 TimePicker를 열 때, 입력한 단위를 유지하는 데 씁니다. 이 예시의 기준 시각은 15:00이므로 아무것도 선택되지 않은 상태에서 분 열의 30을 고르면 00:30이 아니라 15:30이 됩니다.",
+        ].join("\n"),
+      },
+    },
+  },
+  render: function ReferenceTimeStory() {
+    const [time, setTime] = useState<TimeValue | null>(null);
+
+    return (
+      <FlexColumn gap='16px' style={{ alignItems: "center" }}>
+        <PropertyLabel name='referenceTime' value='15:00:00' />
+        <TimePicker
+          format='hh:mm'
+          value={time}
+          onChange={setTime}
+          referenceTime={{ hour: 15, minute: 0, second: 0 }}
+        />
+        <FlexRow gap='8px'>
+          <span>{formatTime(time)}</span>
+          <button type='button' onClick={() => setTime(null)}>
+            초기화
+          </button>
+        </FlexRow>
+      </FlexColumn>
+    );
   },
 };
 
