@@ -45,6 +45,11 @@ const meta: Meta<typeof LabelButton> = {
       description: "비활성화 여부",
       table: { defaultValue: { summary: "false" } },
     },
+    loading: {
+      control: "boolean",
+      description: "로딩 여부",
+      table: { defaultValue: { summary: "false" } },
+    },
   },
 } satisfies Meta<typeof LabelButton>;
 
@@ -104,6 +109,26 @@ export const LabelButtonDisabled: Story = {
       ))}
     </FlexRow>
   ),
+};
+
+export const LabelButtonLoading: Story = {
+  render: () => (
+    <FlexRow>
+      {LABEL_BUTTON_HIERARCHY_OPTIONS.map(hierarchy => (
+        <LabelButton key={hierarchy} hierarchy={hierarchy} loading>
+          레이블
+        </LabelButton>
+      ))}
+    </FlexRow>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "포커스는 유지하고 클릭은 막습니다. `disabled`와 함께 지정하면 `disabled`가 우선합니다.",
+      },
+    },
+  },
 };
 
 export const LabelButtonWithIcons: Story = {
