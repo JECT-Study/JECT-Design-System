@@ -52,6 +52,11 @@ const meta: Meta<typeof BlockButton> = {
       description: "비활성화 여부",
       table: { defaultValue: { summary: "false" } },
     },
+    loading: {
+      control: "boolean",
+      description: "로딩 여부",
+      table: { defaultValue: { summary: "false" } },
+    },
   },
 } satisfies Meta<typeof BlockButton>;
 
@@ -124,6 +129,26 @@ export const BlockButtonDisabled: Story = {
       ))}
     </FlexRow>
   ),
+};
+
+export const BlockButtonLoading: Story = {
+  render: () => (
+    <FlexRow>
+      {BLOCK_BUTTON_VARIANT_OPTIONS.map(variant => (
+        <BlockButton key={variant} variant={variant} loading>
+          레이블
+        </BlockButton>
+      ))}
+    </FlexRow>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "포커스는 유지하고 클릭은 막습니다. `disabled`와 함께 지정하면 `disabled`가 우선합니다.",
+      },
+    },
+  },
 };
 
 export const BlockButtonWithIcons: Story = {

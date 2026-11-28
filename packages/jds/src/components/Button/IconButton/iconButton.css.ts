@@ -179,4 +179,11 @@ export const root = recipe({
 
 export const icon = style({
   color: iconButtonIconColor,
+  selectors: {
+    "[data-loading] > &": { opacity: 0 },
+  },
+});
+
+export const spinner = style({
+  color: iconButtonIconColor,
 });

@@ -1,11 +1,12 @@
 import { clsx } from "clsx";
 import { Slot } from "radix-ui";
-import { forwardRef } from "react";
+import { forwardRef, type MouseEvent } from "react";
 import { getLabelClassName } from "utils";
 
 import { basicRoot, feedbackRoot, iconSizeMap } from "./blockButton.css";
 import type { BlockButtonProps } from "./blockButton.types";
 import { Icon } from "../../Icon";
+import { ButtonSpinner, buttonContent, loadingRoot } from "../ButtonSpinner";
 
 export const BlockButton = forwardRef<HTMLButtonElement, BlockButtonProps>(
   (
@@ -19,7 +20,9 @@ export const BlockButton = forwardRef<HTMLButtonElement, BlockButtonProps>(
       prefixIcon,
       suffixIcon,
       disabled = false,
+      loading = false,
       className,
+      onClick,
       ...restProps
     },
     forwardedRef,
@@ -29,21 +32,45 @@ export const BlockButton = forwardRef<HTMLButtonElement, BlockButtonProps>(
       ? feedbackRoot({ feedback, size })
       : basicRoot({ hierarchy: hierarchy ?? "primary", variant: variant ?? "solid", size });
 
+    const isLoading = loading && !disabled && !asChild;
+
+    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+      if (isLoading) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      onClick?.(event);
+    };
+
     const Component = asChild ? Slot.Root : "button";
     const nativeButtonProps = asChild ? {} : { type: "button" as const, disabled };
+
+    const content = [
+      prefixIcon && <Icon key='prefix' name={prefixIcon} size={iconSize} />,
+      <Slot.Slottable key='label'>{children}</Slot.Slottable>,
+      suffixIcon && <Icon key='suffix' name={suffixIcon} size={iconSize} />,
+    ];
 
     return (
       <Component
         ref={forwardedRef}
         {...nativeButtonProps}
         {...restProps}
+        {...(isLoading && { "aria-disabled": true, "aria-busy": true })}
+        onClick={handleClick}
         data-disabled={disabled || undefined}
+        data-loading={isLoading || undefined}
         data-part='root'
-        className={clsx(getLabelClassName({ size, weight: "bold" }), rootClassName, className)}
+        className={clsx(
+          getLabelClassName({ size, weight: "bold" }),
+          rootClassName,
+          loadingRoot,
+          className,
+        )}
       >
-        {prefixIcon && <Icon name={prefixIcon} size={iconSize} />}
-        <Slot.Slottable>{children}</Slot.Slottable>
-        {suffixIcon && <Icon name={suffixIcon} size={iconSize} />}
+        {asChild ? content : <span className={buttonContent}>{content}</span>}
+        {isLoading && <ButtonSpinner size={iconSize} />}
       </Component>
     );
   },

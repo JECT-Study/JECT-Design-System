@@ -46,20 +46,25 @@ interface IconButtonAccentProps {
 interface IconButtonNativeProps {
   asChild?: false;
   disabled?: boolean;
+  loading?: boolean;
   children?: never;
 }
 
 interface IconButtonCustomProps {
   asChild: true;
   disabled?: never;
+  loading?: never;
   children: ReactElement;
 }
 
 /**
- * `asChild`와 `disabled`는 동시에 사용할 수 없다.
+ * `asChild`는 `disabled`, `loading`과 동시에 사용할 수 없다.
  *
  * asChild로 라우팅 컴포넌트를 전달하면 이동을 자식 요소가 제어하므로,
  * 비활성 상태는 asChild 없이 `<IconButton disabled>`로 표현한다.
+ *
+ * `loading`은 내용을 숨기고 스피너를 표시하며 클릭을 막는다. 포커스는 유지한다.
+ * `disabled`와 함께 지정하면 `disabled`가 우선한다.
  *
  * asChild로 전달한 요소의 children은 무시하고 `icon`만 렌더링한다.
  * 요소는 비워서 전달하고, 접근 이름은 `aria-label`로 지정한다.
