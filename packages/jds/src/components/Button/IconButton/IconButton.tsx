@@ -1,11 +1,19 @@
 import { assignInlineVars } from "@vanilla-extract/dynamic";
 import { clsx } from "clsx";
 import { Slot } from "radix-ui";
-import { cloneElement, forwardRef, isValidElement, useEffect, type ReactNode } from "react";
+import {
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  useEffect,
+  type MouseEvent,
+  type ReactNode,
+} from "react";
 
 import * as styles from "./iconButton.css";
 import type { IconButtonProps } from "./iconButton.types";
 import { Icon } from "../../Icon";
+import { ButtonSpinner, loadingRoot } from "../ButtonSpinner";
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   (
@@ -17,9 +25,11 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
       hierarchy = "primary",
       condensed = true,
       disabled = false,
+      loading = false,
       accentColor,
       className,
       style,
+      onClick,
       ...restProps
     },
     forwardedRef,
@@ -45,6 +55,17 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
       );
     }, [hasIgnoredChildren]);
 
+    const isLoading = loading && !disabled && !asChild;
+
+    const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+      if (isLoading) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      onClick?.(event);
+    };
+
     const Component = asChild ? Slot.Root : "button";
     const nativeButtonProps = asChild ? {} : { type: "button" as const, disabled };
 
@@ -53,9 +74,12 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         ref={forwardedRef}
         {...nativeButtonProps}
         {...restProps}
+        {...(isLoading && { "aria-disabled": true, "aria-busy": true })}
+        onClick={handleClick}
         data-disabled={disabled || undefined}
+        data-loading={isLoading || undefined}
         data-part='root'
-        className={clsx(styles.root({ hierarchy, size, condensed }), className)}
+        className={clsx(styles.root({ hierarchy, size, condensed }), loadingRoot, className)}
         style={{ ...accentStyle, ...style }}
       >
         {asChild && (
@@ -64,6 +88,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
           </Slot.Slottable>
         )}
         <Icon name={icon} size={size} className={styles.icon} />
+        {isLoading && <ButtonSpinner size={size} className={styles.spinner} />}
       </Component>
     );
   },

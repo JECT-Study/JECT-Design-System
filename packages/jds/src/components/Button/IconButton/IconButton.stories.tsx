@@ -46,6 +46,11 @@ const meta: Meta<typeof IconButton> = {
       description: "비활성화 여부",
       table: { defaultValue: { summary: "false" } },
     },
+    loading: {
+      control: "boolean",
+      description: "로딩 여부",
+      table: { defaultValue: { summary: "false" } },
+    },
     "aria-label": {
       control: "text",
       description:
@@ -116,6 +121,30 @@ export const IconButtonDisabled: Story = {
       ))}
     </FlexRow>
   ),
+};
+
+export const IconButtonLoading: Story = {
+  render: () => (
+    <FlexRow>
+      {ICON_BUTTON_HIERARCHY_OPTIONS.map(hierarchy => (
+        <IconButton
+          key={hierarchy}
+          icon='check'
+          hierarchy={hierarchy}
+          loading
+          aria-label={`체크 ${hierarchy}`}
+        />
+      ))}
+    </FlexRow>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "포커스는 유지하고 클릭은 막습니다. `disabled`와 함께 지정하면 `disabled`가 우선합니다.",
+      },
+    },
+  },
 };
 
 export const IconButtonCondensed: Story = {
