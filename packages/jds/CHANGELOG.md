@@ -1,5 +1,59 @@
 # @jects/jds
 
+## 0.10.0
+
+### Minor Changes
+
+- 6a36b3a: **TimePicker**
+
+  오전/오후, 시, 분, 초 열에서 시각 하나를 고르는 `TimePicker` 패널을 추가합니다. 트리거와 팝오버는 포함하지 않습니다. 값은 날짜 없는 `{ hour, minute, second }` 객체이고 `hour`는 0~23입니다.
+
+  | prop                       | 기본값    | 용도                                                             |
+  | -------------------------- | --------- | ---------------------------------------------------------------- |
+  | `format`                   | `"hh:mm"` | 열 구성, `hh`, `hh:mm`, `hh:mm:ss`, `HH:mm`, `mm`, `mm:ss`, `ss` |
+  | `value`                    |           | 선택 시각, 넘기면 제어 모드, `null`은 선택 없음                  |
+  | `defaultValue`             | `null`    | 비제어 모드의 시작 선택값                                        |
+  | `onChange`                 |           | 선택 확정 시 새 시각으로 호출                                    |
+  | `minuteStep`, `secondStep` | `5`       | 분, 초 목록 간격, `1`, `5`, `10`, `15`, `30`                     |
+  | `minTime`, `maxTime`       |           | 선택 가능 범위, 범위 밖 항목은 비활성, 자정을 넘는 범위 미지원   |
+  | `withActionBar`            | `false`   | 적용 버튼 표시, 켜면 적용을 눌러야 확정                          |
+  | `disabled`, `readOnly`     | `false`   | 조작 차단, 읽기 전용                                             |
+
+  ```tsx
+  import { TimePicker, type TimeValue } from "@jects/jds";
+
+  const [time, setTime] = useState<TimeValue | null>(null);
+
+  <TimePicker format='hh:mm' value={time} onChange={setTime} withActionBar />;
+  ```
+
+### Patch Changes
+
+- ca72072: **BlockButton**
+
+  `variant='outlined'` 테두리와 상호작용 오버레이 불투명도를 변경했습니다. `variant='outlined'`의 `border`를 덮어쓰던 스타일이 아니면 호출부 수정은 필요하지 않습니다.
+
+  **동작 변경 (코드 수정 불필요)**
+  - `variant='outlined'` 테두리 — `border`에서 박스 안쪽 `box-shadow`로 변경, 높이와 너비 2px 감소해 다른 `variant`와 같아짐, `border`나 `border-color`로 테두리를 덮어쓰던 스타일은 확인 필요
+  - `variant='outlined'`, `variant='hollow'`, `hierarchy='secondary'` `variant='solid'` 오버레이 불투명도 — hover 8%에서 5%로, pressed 12%에서 8%로 변경, `accent`와 `primary`의 `solid`는 그대로
+
+- ca72072: **IconButton**
+
+  상호작용 오버레이와 모서리를 변경했습니다. 호출부 수정은 필요하지 않으며, 렌더 결과만 달라집니다. IconButton을 쓰는 Chip, ContentBadge의 삭제 버튼도 같은 결과가 적용됩니다.
+
+  **동작 변경 (코드 수정 불필요)**
+  - 오버레이 불투명도 — 모든 `hierarchy`에서 hover 8%에서 5%로, pressed 12%에서 8%로 변경
+  - `primary`, `secondary`, `tertiary` 오버레이 색 — `object.neutral`에서 `fill.boldest`로 변경
+  - 오버레이와 focus ring 모서리 — 크기별로 한 단계 커짐, 기본 `2xs`~`md` 4px에서 6px로, `lg` 4px에서 8px로, `xl`~`3xl` 6px에서 8px로, `condensed` `2xs`~`md` 2px에서 4px로, `lg`~`3xl` 4px에서 6px로 변경
+
+- ca72072: **LabelButton**
+
+  상호작용 오버레이를 변경했습니다. 호출부 수정은 필요하지 않으며, 렌더 결과만 달라집니다.
+
+  **동작 변경 (코드 수정 불필요)**
+  - 오버레이 불투명도 — `hierarchy`와 `feedback` 모두 hover 8%에서 5%로, pressed 12%에서 8%로 변경
+  - `secondary`, `tertiary` 오버레이 색 — `object.boldest`에서 `fill.boldest`로 변경
+
 ## 0.9.0
 
 ### Minor Changes
