@@ -116,10 +116,10 @@ const feedbackVariants = {
   destructive: colorVariant(feedbackColorsByIntent.destructive),
 } satisfies Record<LabelButtonFeedback, StyleRule>;
 
-const rootBase = [overlay(), focusRing(), baseStyles];
+const rootBase = [overlay({ density: "normal" }), focusRing(), baseStyles];
 
 export const basicRoot = recipe({
-  base: [overlay({ density: "normal" }), focusRing(), baseStyles],
+  base: rootBase,
   variants: {
     hierarchy: hierarchyVariants satisfies Record<LabelButtonHierarchy, StyleRule>,
     size: sizeVariants satisfies Record<LabelButtonSize, StyleRule>,

@@ -8,5 +8,5 @@
 
 **동작 변경 (코드 수정 불필요)**
 
-- `hierarchy` 오버레이 불투명도 — hover 8%에서 5%로, pressed 12%에서 8%로 변경, `feedback`은 그대로
+- 오버레이 불투명도 — `hierarchy`와 `feedback` 모두 hover 8%에서 5%로, pressed 12%에서 8%로 변경
 - `secondary`, `tertiary` 오버레이 색 — `object.boldest`에서 `fill.boldest`로 변경
